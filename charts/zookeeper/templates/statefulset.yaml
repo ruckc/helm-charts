@@ -78,8 +78,6 @@ spec:
                 fi
                 exec /docker-entrypoint.sh zkServer.sh start-foreground
           env:
-            - name: ZOO_MY_ID
-              value: {{ .Values.something }}
             - name: ZOO_SERVERS
               {{- $replicaCount := int .Values.replicas }}
               {{- $minServerId := int 1 }}
