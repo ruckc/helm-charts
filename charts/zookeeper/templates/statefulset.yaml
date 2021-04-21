@@ -5,19 +5,29 @@ metadata:
   labels:
     {{- include "zookeeper.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  serviceName: {{ include "zookeeper.fullname" . }}-headless
+  replicas: {{ .Values.replicas }}
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  updateStrategy:
+    type: {{ .Values.updateStrategy }}
+    {{- if (eq "Recreate" .Values.updateStrategy) }}
+    rollingUpdate: null
+    {{- else if .Values.rollingUpdatePartition }}
+    rollingUpdate:
+      partition: {{ .Values.rollingUpdatePartition }}
+    {{- end }}
   selector:
-    matchLabels:
-      {{- include "zookeeper.selectorLabels" . | nindent 6 }}
+    matchLabels: {{- include "zookeeper.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: zookeeper
   template:
     metadata:
+      name: {{ include "zookeeper.fullname" . }}
       {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
+        app.kubernetes.io/component: zookeeper
         {{- include "zookeeper.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -34,19 +44,58 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 80
+            - name: client
+              containerPort: 2181
+              protocol: TCP
+            - name: follower
+              containerPort: 2888
+              protocol: TCP
+            - name: election
+              containerPort: 3888
+              protocol: TCP
+            - name: admin
+              containerPort: 8080
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
-              port: http
+              port: admin
           readinessProbe:
             httpGet:
               path: /
-              port: http
+              port: admin
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          entrypoint:
+            - bash
+            - -ec
+            - |
+                if [[ -f "/data/myid" ]]; then
+                  export ZOO_MY_ID="$(cat /data/myid)"
+                else
+                  HOSTNAME=`hostname -s`
+                  if [[ $HOSTNAME =~ (.*)-([0-9]+)$ ]]; then
+                    ORD=${BASH_REMATCH[2]}
+                    export ZOO_MY_ID=$ORD
+                  else
+                    echo "Failed to get index from hostname $HOSTNAME"
+                    exit 2
+                  fi
+                fi
+                exec /docker-entrypoint.sh zkServer.sh start-foreground
+          env:
+            - name: ZOO_MY_ID
+              value: {{ .Values.something }}
+            - name: ZOO_SERVERS
+              {{- $replicaCount := int .Values.replicas }}
+              {{- $minServerId := int 1 }}
+              {{- $followerPort := int .Values.service.ports.follower }}
+              {{- $electionPort := int .Values.service.ports.election }}
+              {{- $releaseNamespace := include "zookeeper.namespace" . }}
+              {{- $zookeeperFullname := include "zookeeper.fullname" . }}
+              {{- $zookeeperHeadlessServiceName := printf "%s-%s" $zookeeperFullname "headless" | trunc 63  }}
+              {{- $clusterDomain := .Values.clusterDomain }}
+              value: {{ range $i, $e := until $replicaCount }}{{ $zookeeperFullname }}-{{ $e }}.{{ $zookeeperHeadlessServiceName }}.{{ $releaseNamespace }}.svc.{{ $clusterDomain }}:{{ $followerPort }}:{{ $electionPort }}::{{ add $e $minServerId }} {{ end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -59,3 +108,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+

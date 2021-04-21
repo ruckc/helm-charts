@@ -8,19 +8,19 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.ports.client }}
-      targetPort: {{ .Values.service.ports.client }}
+      targetPort: 2181
       protocol: TCP
       name: client
     - port: {{ .Values.service.ports.follower }}
-      targetPort: {{ .Values.service.ports.follower }}
+      targetPort: 2888
       protocol: TCP
       name: follower
     - port: {{ .Values.service.ports.election }}
-      targetPort: {{ .Values.service.ports.election }}
+      targetPort: 3888
       protocol: TCP
       name: election
     - port: {{ .Values.service.ports.admin }}
-      targetPort: {{ .Values.service.ports.admin }}
+      targetPort: 8080
       protocol: TCP
       name: admin
   selector:
