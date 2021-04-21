@@ -38,6 +38,7 @@ jobs:
         uses: desaintmartin/helm-kubeval-action@master
         with:
           path: ./charts
+          config: ./.github/config_repos
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.1.0
