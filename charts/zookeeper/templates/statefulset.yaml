@@ -60,7 +60,7 @@ spec:
               port: admin
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          entrypoint:
+          command:
             - bash
             - -ec
             - |
