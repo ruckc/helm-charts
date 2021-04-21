@@ -10,12 +10,6 @@ spec:
   podManagementPolicy: {{ .Values.podManagementPolicy }}
   updateStrategy:
     type: {{ .Values.updateStrategy }}
-    {{- if (eq "Recreate" .Values.updateStrategy) }}
-    rollingUpdate: null
-    {{- else if .Values.rollingUpdatePartition }}
-    rollingUpdate:
-      partition: {{ .Values.rollingUpdatePartition }}
-    {{- end }}
   selector:
     matchLabels: {{- include "zookeeper.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: zookeeper
@@ -91,7 +85,7 @@ spec:
               {{- $minServerId := int 1 }}
               {{- $followerPort := int .Values.service.ports.follower }}
               {{- $electionPort := int .Values.service.ports.election }}
-              {{- $releaseNamespace := include "zookeeper.namespace" . }}
+              {{- $releaseNamespace := .Release.Namespace }}
               {{- $zookeeperFullname := include "zookeeper.fullname" . }}
               {{- $zookeeperHeadlessServiceName := printf "%s-%s" $zookeeperFullname "headless" | trunc 63  }}
               {{- $clusterDomain := .Values.clusterDomain }}
