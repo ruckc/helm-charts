@@ -51,13 +51,20 @@ spec:
               containerPort: 8080
               protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /
-              port: admin
+            exec:
+              command:
+                - sh
+                - -c
+                - "zookeeper-ready 2181"
+              initialDelaySeconds: 10
+              timeoutSeconds: 5
           readinessProbe:
-            httpGet:
-              path: /
-              port: admin
+              command:
+                - sh
+                - -c
+                - "zookeeper-ready 2181"
+              initialDelaySeconds: 10
+              timeoutSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           command:
