@@ -59,10 +59,11 @@ spec:
             initialDelaySeconds: 10
             timeoutSeconds: 5
           readinessProbe:
-            command:
-              - sh
-              - -c
-              - "zookeeper-ready 2181"
+            exec:
+              command:
+                - sh
+                - -c
+                - "zookeeper-ready 2181"
             initialDelaySeconds: 10
             timeoutSeconds: 5
           resources:
