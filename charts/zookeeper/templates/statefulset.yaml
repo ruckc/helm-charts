@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "zookeeper.fullname" . }}
+  labels:
+    {{- include "zookeeper.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "zookeeper.fullname" . }}-headless
+  replicas: {{ .Values.replicas }}
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  updateStrategy:
+    type: {{ .Values.updateStrategy }}
+  selector:
+    matchLabels: {{- include "zookeeper.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: zookeeper
+  template:
+    metadata:
+      name: {{ include "zookeeper.fullname" . }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/component: zookeeper
+        {{- include "zookeeper.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "zookeeper.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: client
+              containerPort: 2181
+              protocol: TCP
+            - name: follower
+              containerPort: 2888
+              protocol: TCP
+            - name: election
+              containerPort: 3888
+              protocol: TCP
+            - name: admin
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - nc
+                - -z
+                - -v
+                - localhost
+                - "2181"
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - nc
+                - -z
+                - -v
+                - localhost
+                - "2181"
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          command:
+            - bash
+            - -ec
+            - |
+                if [[ -f "/data/myid" ]]; then
+                  export ZOO_MY_ID="$(cat /data/myid)"
+                else
+                  HOSTNAME=`hostname -s`
+                  if [[ $HOSTNAME =~ (.*)-([0-9]+)$ ]]; then
+                    ORD=${BASH_REMATCH[2]}
+                    export ZOO_MY_ID=$ORD
+                  else
+                    echo "Failed to get index from hostname $HOSTNAME"
+                    exit 2
+                  fi
+                fi
+                export CONFIG=$ZOO_CONF_DIR/zoo.cfg
+                {
+                  echo 'clientPort={{ .Values.service.ports.client }}'
+
+                  echo "dataDir=$ZOO_DATA_DIR"
+                  echo "dataLogDir=$ZOO_DATA_LOG_DIR"
+
+                  echo "tickTime=$ZOO_TICK_TIME"
+                  echo "initLimit=$ZOO_INIT_LIMIT"
+                  echo "syncLimit=$ZOO_SYNC_LIMIT"
+
+                  echo "autopurge.snapRetainCount=$ZOO_AUTOPURGE_SNAPRETAINCOUNT"
+                  echo "autopurge.purgeInterval=$ZOO_AUTOPURGE_PURGEINTERVAL"
+                  echo "maxClientCnxns=$ZOO_MAX_CLIENT_CNXNS"
+                  echo "standaloneEnabled=$ZOO_STANDALONE_ENABLED"
+                  echo "admin.enableServer=$ZOO_ADMINSERVER_ENABLED"
+                } > $CONFIG
+                for server in $ZOO_SERVERS; do
+                  echo "$server" >> "$CONFIG"
+                done
+                if [[ -n $ZOO_4LW_COMMANDS_WHITELIST ]]; then
+                  echo "4lw.commands.whitelist=$ZOO_4LW_COMMANDS_WHITELIST" >> "$CONFIG"
+                fi
+
+                for cfg_extra_entry in $ZOO_CFG_EXTRA; do
+                  echo "$cfg_extra_entry" >> "$CONFIG"
+                done
+                cat $CONFIG
+                echo "========================="
+                exec zkServer.sh start-foreground
+          env:
+            - name: ZOO_SERVERS
+              {{- $replicaCount := int .Values.replicas }}
+              {{- $minServerId := int 1 }}
+              {{- $followerPort := int .Values.service.ports.follower }}
+              {{- $electionPort := int .Values.service.ports.election }}
+              {{- $releaseNamespace := .Release.Namespace }}
+              {{- $zookeeperFullname := include "zookeeper.fullname" . }}
+              {{- $zookeeperHeadlessServiceName := printf "%s-%s" $zookeeperFullname "headless" | trunc 63  }}
+              {{- $clusterDomain := .Values.clusterDomain }}
+              value: {{ range $i, $e := until $replicaCount }}{{ $zookeeperFullname }}-{{ $e }}.{{ $zookeeperHeadlessServiceName }}.{{ $releaseNamespace }}.svc.{{ $clusterDomain }}:{{ $followerPort }}:{{ $electionPort }}::{{ add $e $minServerId }} {{ end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+

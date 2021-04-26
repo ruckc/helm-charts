@@ -1,0 +1,11 @@
+apiVersion: v2
+name: zookeeper
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: 3.7.0
+icon: https://svn.apache.org/repos/asf/zookeeper/logo/zk_logo_use2.png
+maintainers:
+  - name: ruckc
+    email: curtis@ruck.io
+    url: https://github.com/ruckc/helm-charts
