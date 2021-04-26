@@ -37,7 +37,7 @@ securityContext: {}
 service:
   type: ClusterIP
   ports:
-    client: 2121
+    client: 2181
     follower: 2888
     election: 3888
     admin: 8080
