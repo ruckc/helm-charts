@@ -53,9 +53,10 @@ spec:
           livenessProbe:
             exec:
               command:
+                - echo
+                - stat
+                - "|"
                 - nc
-                - -z
-                - -v
                 - localhost
                 - "2181"
             initialDelaySeconds: 10
@@ -63,9 +64,10 @@ spec:
           readinessProbe:
             exec:
               command:
+                - echo
+                - stat
+                - "|"
                 - nc
-                - -z
-                - -v
                 - localhost
                 - "2181"
             initialDelaySeconds: 10
