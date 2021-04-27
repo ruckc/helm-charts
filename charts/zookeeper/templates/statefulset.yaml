@@ -13,6 +13,17 @@ spec:
   selector:
     matchLabels: {{- include "zookeeper.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: zookeeper
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.storage.className }}
+        storageClassName: {{ .Values.storage.className }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
   template:
     metadata:
       name: {{ include "zookeeper.fullname" . }}

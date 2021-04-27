@@ -81,3 +81,8 @@ tolerations: []
 affinity: {}
 
 replicas: 3
+
+storage:
+  # className:
+  size: 1Gi
+
