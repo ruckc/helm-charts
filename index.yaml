@@ -3,6 +3,21 @@ entries:
   zookeeper:
   - apiVersion: v2
     appVersion: 3.7.0
+    created: "2021-04-27T14:29:05.837652142Z"
+    description: A Helm chart for Kubernetes
+    digest: e00a7c5a21f02a1b87f6bec22ee2243af68493b7211c94cf4941cf23cee2a42c
+    icon: https://svn.apache.org/repos/asf/zookeeper/logo/zk_logo_use2.png
+    maintainers:
+    - email: curtis@ruck.io
+      name: ruckc
+      url: https://github.com/ruckc/helm-charts
+    name: zookeeper
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/zookeeper-0.1.1/zookeeper-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 3.7.0
     created: "2021-04-26T19:37:06.382006565Z"
     description: A Helm chart for Kubernetes
     digest: 132410df10d82eec1c79b7c22b8ef28c292383343e11a0969a4be77f1a505b7b
@@ -16,4 +31,4 @@ entries:
     urls:
     - https://github.com/ruckc/helm-charts/releases/download/zookeeper-0.1.0/zookeeper-0.1.0.tgz
     version: 0.1.0
-generated: "2021-04-26T19:37:06.382013465Z"
+generated: "2021-04-27T14:29:05.837945643Z"
