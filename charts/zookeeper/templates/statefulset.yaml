@@ -85,6 +85,7 @@ spec:
                   if [[ $HOSTNAME =~ (.*)-([0-9]+)$ ]]; then
                     ORD=${BASH_REMATCH[2]}
                     export ZOO_MY_ID=$ORD
+                    echo $ZOO_MY_ID > /data/myid
                   else
                     echo "Failed to get index from hostname $HOSTNAME"
                     exit 2
