@@ -78,16 +78,5 @@ ldap:
   allowAnon: false
   tls:
     enabled: true
-  users:
-    - username: user1
-      storage:
-        secret:
-          name: ldap-credentials
-          namespace: user1
-    - username: user2
-      storage:
-        secret:
-          name: ldap-credentials
-          namespace: user2
 
 debug: true

@@ -90,8 +90,3 @@ key: {{ $cert.Key | b64enc }}
 {{ randAlphaNum 32 | b64enc }}
 {{- end -}}
 {{- end -}}
-
-{{- define "openldap.ldap-users" }}
-users: "user1"
-passwords: "pass1"
-{{ end -}}
