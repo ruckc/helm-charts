@@ -25,16 +25,15 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  fsGroup: 1000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
 
 services:
   ldap:
@@ -43,11 +42,6 @@ services:
   ldaps:
     type: ClusterIP
     port: 636
-
-storage:
-  # className: ""
-  size: 10Gi
-  accessModes: ["ReadWriteOnce"]
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -73,3 +67,27 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+storage:
+  # className: ""
+  size: 10Gi
+  accessModes: ["ReadWriteOnce"]
+
+ldap:
+  root: dc=example,dc=com
+  allowAnon: false
+  tls:
+    enabled: true
+  users:
+    - username: user1
+      storage:
+        secret:
+          name: ldap-credentials
+          namespace: user1
+    - username: user2
+      storage:
+        secret:
+          name: ldap-credentials
+          namespace: user2
+
+debug: true

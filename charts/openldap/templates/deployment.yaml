@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openldap.fullname" . }}
+  labels:
+    {{- include "openldap.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "openldap.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "openldap.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "openldap.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: ldap
+              containerPort: 1389
+              protocol: TCP
+            - name: ldaps
+              containerPort: 1636
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: ldapdata
+              mountPath: /bitnami/openldap
+          env:
+            - name: LDAP_PORT_NUMBER
+              value: "1389"
+            - name: LDAP_LDAPS_PORT_NUMBER
+              value: "1636"
+            - name: LDAP_ROOT
+              value: {{ .Values.ldap.root }}
+{{ if .Values.ldap.tls.enabled }}
+            - name: LDAP_ENABLE_TLS
+              value: "yes"
+            - name: LDAP_TLS_CERT_FILE
+              value: "/tls/tls.crt"
+            - name: LDAP_TLS_KEY_FILE
+              value: "/tls/tls.key"
+            - name: LDAP_TLS_CA_FILE
+              value: "/tls/ca.crt"
+{{ end }}
+            - name: LDAP_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "openldap.fullname" . }}-admin
+                  key: username
+            - name: LDAP_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "openldap.fullname" . }}-admin
+                  key: password
+            - name: LDAP_CONFIG_ADMIN_ENABLED
+              value: "yes"
+            - name: LDAP_CONFIG_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "openldap.fullname" . }}-config-admin
+                  key: username
+            - name: LDAP_CONFIG_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "openldap.fullname" . }}-config-admin
+                  key: password
+            - name: BITNAMI_DEBUG
+              value: {{ .Values.debug | default false | quote }}
+            - name: LDAP_ALLOW_ANON_BINDING
+              value: {{ .Values.ldap.allowAnon | default false | ternary "yes" "no" | quote }}
+            - name: LDAP_SKIP_DEFAULT_TREE
+              value: "no"
+            - name: LDAP_CUSTOM_LDIF_DIR
+              value: "/bitnami/ldif-objects"
+            - name: LDAP_CUSTOM_SCHEMA_FILE
+              value: "/bitnami/ldif-config/custom-config.ldif"
+          volumeMounts:
+{{- if .Values.ldap.tls.enabled }}
+            - name: tls
+              mountPath: "/tls"
+              readOnly: true
+{{- end }}
+            - name: data
+              mountPath: "/bitnami/openldap/data"
+            - name: tmp
+              mountPath: "/tmp"
+            - name: ldif-config
+              mountPath: "/bitnami/ldif-config"
+            - name: ldif-objects
+              mountPath: "/bitnami/ldif-objects"
+      volumes:
+{{- if .Values.ldap.tls.enabled }}
+        - name: tls
+          secret:
+            secretName: {{ include "openldap.fullname" . }}-tls
+{{- end }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "openldap.fullname" . }}-data
+        - name: tmp
+          emptyDir: {}
+        - name: ldif-config
+          configMap:
+            name: {{ include "openldap.fullname" . }}-ldif-config
+        - name: ldif-objects
+          configMap:
+            name: {{ include "openldap.fullname" . }}-ldif-objects
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

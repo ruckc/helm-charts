@@ -1,0 +1,86 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "openldap.fullname" . }}-ldif-config
+  namespace: {{ .Release.Namespace }}
+data:
+  custom-config.ldif: |
+    dn: cn=module{0},cn=config
+    objectClass: olcModuleList
+    cn: module{0}
+    olcModuleLoad: ppolicy
+    olcModuleLoad: memberof
+    olcModuleLoad: unique
+
+    dn: olcOverlay={0}ppolicy,olcDatabase={2}mdb,cn=config
+    objectClass: olcPPolicyConfig
+    objectClass: olcOverlayConfig
+    olcOverlay: ppolicy
+    olcPPolicyDefault: cn=default,ou=policies,{{ .Values.ldap.root }}
+    olcPPolicyForwardUpdates: FALSE
+    olcPPolicyHashCleartext: TRUE
+    olcPPolicyUseLockout: TRUE
+
+    dn: olcOverlay={0}unique,olcDatabase={2}mdb,cn=config
+    objectClass: olcUniqueConfig
+    objectClass: olcOverlayConfig
+    olcOverlay: unique
+    olcUniqueURI: ldap://?mail?sub
+
+    dn: olcOverlay={1}unique,olcDatabase={2}mdb,cn=config
+    objectClass: olcUniqueConfig
+    objectClass: olcOverlayConfig
+    olcOverlay: unique
+    olcUniqueURI: ldap://?uid?sub
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "openldap.fullname" . }}-ldif-objects
+  namespace: {{ .Release.Namespace }}
+data:
+  01-root.ldif: |
+    dn: {{ .Values.ldap.root }}
+    dc: {{ mustRegexReplaceAll "dc=(.*?),.*" .Values.ldap.root "${1}" }}
+    objectClass: domain
+
+  02-ous.ldif: |
+    dn: ou=services,{{ .Values.ldap.root }}
+    ou: services
+    objectClass: organizationalunit
+    
+    dn: ou=policies,{{ .Values.ldap.root }}
+    ou: policies
+    objectClass: organizationalunit
+
+    dn: ou=users,{{ .Values.ldap.root }}
+    ou: users
+    objectClass: organizationalunit
+
+    dn: ou=groups,{{ .Values.ldap.root }}
+    ou: groups
+    objectClass: organizationalunit
+
+  03-default-password-policy.ldif: |
+    dn: cn=default,ou=policies,{{ .Values.ldap.root }}
+    cn: default
+    objectClass: pwdPolicy
+    objectClass: device
+    objectClass: top
+    pwdAllowUserChange: TRUE
+    pwdAttribute: userPassword
+    pwdCheckQuality: 2
+    pwdExpireWarning: 600
+    pwdFailureCountInterval: 30
+    pwdGraceAuthNLimit: 5
+    pwdInHistory: 24
+    pwdLockout: TRUE
+    pwdLockoutDuration: 0
+    pwdMaxAge: 0
+    pwdMaxFailure: 5
+    pwdMinAge: 0
+    pwdMinLength: 10
+    pwdMustChange: TRUE
+    pwdSafeModify: TRUE

@@ -60,3 +60,38 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Generate certificates for openldap
+*/}}
+{{- define "openldap.cert" -}}
+{{- $namePrefix := ( include "openldap.fullname" . ) -}}
+{{- $secret := lookup "v1" "Secret" .Release.Namespace (printf "%s-tls" ( include "openldap.fullname" . )) -}}
+{{- if $secret -}}
+ca: {{ index $secret.data "ca.crt" }}
+cert: {{ index $secret.data "tls.crt" }}
+key: {{ index $secret.data "tls.key" }}
+{{- else -}}
+{{- $altNames := list ( printf "%s-%s.%s" $namePrefix "ldap" .Release.Namespace ) ( printf "%s-%s.%s.svc" $namePrefix "ldaps" .Release.Namespace ) -}}
+{{- $ca := genCA "openldap-ca" 3650 -}}
+{{- $cert := genSignedCert ( include "openldap.fullname" . ) nil $altNames 3650 $ca -}}
+ca: {{ $ca.Cert | b64enc }}
+cert: {{ $cert.Cert | b64enc }}
+key: {{ $cert.Key | b64enc }}
+{{- end -}}
+{{- end -}}
+
+{{/* generate admin password */}}
+{{- define "openldap.admin-password" -}}
+{{- $secret := lookup "v1" "Secret" .Release.Namespace (printf "%s-admin" ( include "openldap.fullname" . )) -}}
+{{- if $secret -}}
+{{ $secret.data.password }}
+{{- else -}}
+{{ randAlphaNum 32 | b64enc }}
+{{- end -}}
+{{- end -}}
+
+{{- define "openldap.ldap-users" }}
+users: "user1"
+passwords: "pass1"
+{{ end -}}
