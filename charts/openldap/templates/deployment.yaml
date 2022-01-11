@@ -40,9 +40,6 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          volumeMounts:
-            - name: ldapdata
-              mountPath: /bitnami/openldap
           env:
             - name: LDAP_PORT_NUMBER
               value: "1389"
@@ -99,7 +96,7 @@ spec:
               readOnly: true
 {{- end }}
             - name: data
-              mountPath: "/bitnami/openldap/data"
+              mountPath: "/bitnami/openldap"
             - name: tmp
               mountPath: "/tmp"
             - name: ldif-config
