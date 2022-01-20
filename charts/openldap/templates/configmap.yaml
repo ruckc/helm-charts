@@ -5,21 +5,7 @@ metadata:
   name: {{ include "openldap.fullname" . }}-ldif-configs
   namespace: {{ .Release.Namespace }}
 data:
-  00-overlays.ldif: |
-    dn: olcOverlay={0}ppolicy,olcDatabase={1}mdb,cn=config
-    objectClass: olcPPolicyConfig
-    objectClass: olcOverlayConfig
-    olcOverlay: ppolicy
-    olcPPolicyDefault: cn=default,ou=policies,{{ .Values.ldap.suffix }}
-    olcPPolicyForwardUpdates: FALSE
-    olcPPolicyHashCleartext: TRUE
-    olcPPolicyUseLockout: TRUE
-
-    dn: olcOverlay={0}unique,olcDatabase={1}mdb,cn=config
-    objectClass: olcUniqueConfig
-    objectClass: olcOverlayConfig
-    olcOverlay: unique
-    olcUniqueURI: ldap://?mail,uid?sub
+{{ toYaml .Values.ldifs.configs | indent 2 }}
 
 ---
 apiVersion: v1
@@ -28,46 +14,4 @@ metadata:
   name: {{ include "openldap.fullname" . }}-ldif-objects
   namespace: {{ .Release.Namespace }}
 data:
-  01-base.ldif: |
-    dn: {{ .Values.ldap.suffix }}
-    dc: {{ mustRegexReplaceAll "dc=(.*?),.*" .Values.ldap.suffix "${1}" }}
-    objectClass: domain
-
-  02-ous.ldif: |
-    dn: ou=services,{{ .Values.ldap.suffix }}
-    ou: services
-    objectClass: organizationalunit
-    
-    dn: ou=policies,{{ .Values.ldap.suffix }}
-    ou: policies
-    objectClass: organizationalunit
-
-    dn: ou=users,{{ .Values.ldap.suffix }}
-    ou: users
-    objectClass: organizationalunit
-
-    dn: ou=groups,{{ .Values.ldap.suffix }}
-    ou: groups
-    objectClass: organizationalunit
-
-  03-default-password-policy.ldif: |
-    dn: cn=default,ou=policies,{{ .Values.ldap.suffix }}
-    cn: default
-    objectClass: pwdPolicy
-    objectClass: device
-    objectClass: top
-    pwdAllowUserChange: TRUE
-    pwdAttribute: userPassword
-    pwdCheckQuality: 2
-    pwdExpireWarning: 600
-    pwdFailureCountInterval: 30
-    pwdGraceAuthNLimit: 5
-    pwdInHistory: 24
-    pwdLockout: TRUE
-    pwdLockoutDuration: 0
-    pwdMaxAge: 0
-    pwdMaxFailure: 5
-    pwdMinAge: 0
-    pwdMinLength: 10
-    pwdMustChange: TRUE
-    pwdSafeModify: TRUE
+{{ toYaml .Values.ldifs.objects | indent 2 }}
