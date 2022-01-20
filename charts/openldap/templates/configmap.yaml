@@ -2,37 +2,24 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "openldap.fullname" . }}-ldif-config
+  name: {{ include "openldap.fullname" . }}-ldif-configs
   namespace: {{ .Release.Namespace }}
 data:
-  custom-config.ldif: |
-    dn: cn=module{0},cn=config
-    objectClass: olcModuleList
-    cn: module{0}
-    olcModuleLoad: ppolicy
-    olcModuleLoad: memberof
-    olcModuleLoad: unique
-
-    dn: olcOverlay={0}ppolicy,olcDatabase={2}mdb,cn=config
+  00-overlays.ldif: |
+    dn: olcOverlay={0}ppolicy,olcDatabase={1}mdb,cn=config
     objectClass: olcPPolicyConfig
     objectClass: olcOverlayConfig
     olcOverlay: ppolicy
-    olcPPolicyDefault: cn=default,ou=policies,{{ .Values.ldap.root }}
+    olcPPolicyDefault: cn=default,ou=policies,{{ .Values.ldap.suffix }}
     olcPPolicyForwardUpdates: FALSE
     olcPPolicyHashCleartext: TRUE
     olcPPolicyUseLockout: TRUE
 
-    dn: olcOverlay={0}unique,olcDatabase={2}mdb,cn=config
+    dn: olcOverlay={0}unique,olcDatabase={1}mdb,cn=config
     objectClass: olcUniqueConfig
     objectClass: olcOverlayConfig
     olcOverlay: unique
-    olcUniqueURI: ldap://?mail?sub
-
-    dn: olcOverlay={1}unique,olcDatabase={2}mdb,cn=config
-    objectClass: olcUniqueConfig
-    objectClass: olcOverlayConfig
-    olcOverlay: unique
-    olcUniqueURI: ldap://?uid?sub
+    olcUniqueURI: ldap://?mail,uid?sub
 
 ---
 apiVersion: v1
@@ -41,30 +28,30 @@ metadata:
   name: {{ include "openldap.fullname" . }}-ldif-objects
   namespace: {{ .Release.Namespace }}
 data:
-  01-root.ldif: |
-    dn: {{ .Values.ldap.root }}
-    dc: {{ mustRegexReplaceAll "dc=(.*?),.*" .Values.ldap.root "${1}" }}
+  01-base.ldif: |
+    dn: {{ .Values.ldap.suffix }}
+    dc: {{ mustRegexReplaceAll "dc=(.*?),.*" .Values.ldap.suffix "${1}" }}
     objectClass: domain
 
   02-ous.ldif: |
-    dn: ou=services,{{ .Values.ldap.root }}
+    dn: ou=services,{{ .Values.ldap.suffix }}
     ou: services
     objectClass: organizationalunit
     
-    dn: ou=policies,{{ .Values.ldap.root }}
+    dn: ou=policies,{{ .Values.ldap.suffix }}
     ou: policies
     objectClass: organizationalunit
 
-    dn: ou=users,{{ .Values.ldap.root }}
+    dn: ou=users,{{ .Values.ldap.suffix }}
     ou: users
     objectClass: organizationalunit
 
-    dn: ou=groups,{{ .Values.ldap.root }}
+    dn: ou=groups,{{ .Values.ldap.suffix }}
     ou: groups
     objectClass: organizationalunit
 
   03-default-password-policy.ldif: |
-    dn: cn=default,ou=policies,{{ .Values.ldap.root }}
+    dn: cn=default,ou=policies,{{ .Values.ldap.suffix }}
     cn: default
     objectClass: pwdPolicy
     objectClass: device

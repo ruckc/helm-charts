@@ -18,6 +18,7 @@ spec:
       labels:
         {{- include "openldap.selectorLabels" . | nindent 8 }}
     spec:
+      
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -35,21 +36,21 @@ spec:
             - name: ldap
               containerPort: 1389
               protocol: TCP
+{{ if .Values.ldap.tls.enabled }}
             - name: ldaps
               containerPort: 1636
               protocol: TCP
+{{ end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            - name: LDAP_PORT_NUMBER
+            - name: LDAP_PORT
               value: "1389"
-            - name: LDAP_LDAPS_PORT_NUMBER
-              value: "1636"
-            - name: LDAP_ROOT
-              value: {{ .Values.ldap.root }}
+            - name: LDAP_SUFFIX
+              value: {{ .Values.ldap.suffix }}
 {{ if .Values.ldap.tls.enabled }}
-            - name: LDAP_ENABLE_TLS
-              value: "yes"
+            - name: LDAPS_PORT
+              value: "1636"
             - name: LDAP_TLS_CERT_FILE
               value: "/tls/tls.crt"
             - name: LDAP_TLS_KEY_FILE
@@ -57,38 +58,16 @@ spec:
             - name: LDAP_TLS_CA_FILE
               value: "/tls/ca.crt"
 {{ end }}
-            - name: LDAP_ADMIN_USERNAME
+            - name: ADMIN_DN
               valueFrom:
                 secretKeyRef:
                   name: {{ include "openldap.fullname" . }}-admin
-                  key: username
-            - name: LDAP_ADMIN_PASSWORD
+                  key: dn
+            - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "openldap.fullname" . }}-admin
                   key: password
-            - name: LDAP_CONFIG_ADMIN_ENABLED
-              value: "yes"
-            - name: LDAP_CONFIG_ADMIN_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "openldap.fullname" . }}-config-admin
-                  key: username
-            - name: LDAP_CONFIG_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "openldap.fullname" . }}-config-admin
-                  key: password
-            - name: BITNAMI_DEBUG
-              value: {{ .Values.debug | default false | quote }}
-            - name: LDAP_ALLOW_ANON_BINDING
-              value: {{ .Values.ldap.allowAnon | default false | ternary "yes" "no" | quote }}
-            - name: LDAP_SKIP_DEFAULT_TREE
-              value: "no"
-            - name: LDAP_CUSTOM_LDIF_DIR
-              value: "/bitnami/ldif-objects"
-            - name: LDAP_CUSTOM_SCHEMA_FILE
-              value: "/bitnami/ldif-config/custom-config.ldif"
           volumeMounts:
 {{- if .Values.ldap.tls.enabled }}
             - name: tls
@@ -96,13 +75,13 @@ spec:
               readOnly: true
 {{- end }}
             - name: data
-              mountPath: "/bitnami/openldap"
+              mountPath: "/data"
             - name: tmp
               mountPath: "/tmp"
-            - name: ldif-config
-              mountPath: "/bitnami/ldif-config"
+            - name: ldif-configs
+              mountPath: "/ldifs/config"
             - name: ldif-objects
-              mountPath: "/bitnami/ldif-objects"
+              mountPath: "/ldifs/objects"
       volumes:
 {{- if .Values.ldap.tls.enabled }}
         - name: tls
@@ -114,9 +93,9 @@ spec:
             claimName: {{ include "openldap.fullname" . }}-data
         - name: tmp
           emptyDir: {}
-        - name: ldif-config
+        - name: ldif-configs
           configMap:
-            name: {{ include "openldap.fullname" . }}-ldif-config
+            name: {{ include "openldap.fullname" . }}-ldif-configs
         - name: ldif-objects
           configMap:
             name: {{ include "openldap.fullname" . }}-ldif-objects

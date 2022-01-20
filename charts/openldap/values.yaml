@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: docker.io/bitnami/openldap
+  repository: ghcr.io/ruckc/openldap
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   # tag: ""
@@ -74,9 +74,8 @@ storage:
   accessModes: ["ReadWriteOnce"]
 
 ldap:
-  root: dc=example,dc=com
-  allowAnon: false
+  suffix: dc=example,dc=com
   tls:
     enabled: true
 
-debug: true
+debug: 0
