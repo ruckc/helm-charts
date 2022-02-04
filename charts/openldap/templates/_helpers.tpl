@@ -66,7 +66,7 @@ Generate certificates for openldap
 */}}
 {{- define "openldap.cert" -}}
 {{- $namePrefix := ( include "openldap.fullname" . ) -}}
-{{- $secret := lookup "v1" "Secret" .Release.Namespace (printf "%s-tls" ( include "openldap.fullname" . )) -}}
+{{- $secret := lookup "v1" "Secret" .Release.Namespace (print ( include "openldap.fullname" . ) "-tls") -}}
 {{- if $secret -}}
 ca: {{ index $secret.data "ca.crt" }}
 cert: {{ index $secret.data "tls.crt" }}
@@ -85,8 +85,15 @@ key: {{ $cert.Key | b64enc }}
 {{- define "openldap.admin-password" -}}
 {{- $secret := lookup "v1" "Secret" .Release.Namespace (printf "%s-admin" ( include "openldap.fullname" . )) -}}
 {{- if $secret -}}
-{{ $secret.data.password }}
+{{ $secret.data.password | b64dec }}
 {{- else -}}
-{{ randAlphaNum 32 | b64enc }}
+{{ randAlphaNum 32 }}
+{{- end -}}
+{{- end -}}
+
+{{/* generate ldap user passwords */}}
+{{- define "openldap.generate-passwords" -}}
+{{- range .Values.ldap.users }}
+{{ .dn | quote }}: {{ randAlphaNum 32 | quote }} 
 {{- end -}}
 {{- end -}}

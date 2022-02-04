@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,7 +19,6 @@ spec:
       labels:
         {{- include "openldap.selectorLabels" . | nindent 8 }}
     spec:
-      
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -36,19 +36,23 @@ spec:
             - name: ldap
               containerPort: 1389
               protocol: TCP
-{{ if .Values.ldap.tls.enabled }}
+{{- if .Values.ldap.tls.enabled }}
             - name: ldaps
               containerPort: 1636
               protocol: TCP
-{{ end }}
+{{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
+{{- if .Values.debug }}
+            - name: DEBUG
+              value: {{ .Values.debug | quote }}
+{{- end }}
             - name: LDAP_PORT
               value: "1389"
             - name: LDAP_SUFFIX
               value: {{ .Values.ldap.suffix }}
-{{ if .Values.ldap.tls.enabled }}
+{{- if .Values.ldap.tls.enabled }}
             - name: LDAPS_PORT
               value: "1636"
             - name: LDAP_TLS_CERT_FILE
@@ -57,17 +61,15 @@ spec:
               value: "/tls/tls.key"
             - name: LDAP_TLS_CA_FILE
               value: "/tls/ca.crt"
-{{ end }}
+{{- end }}
+            - name: CUSTOM_CONFIG_LDIFS
+              value: "/ldifs/config"
+            - name: CUSTOM_OBJECT_LDIFS
+              value: "/ldifs/objects"
             - name: ADMIN_DN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "openldap.fullname" . }}-admin
-                  key: dn
+              value: {{ .Values.ldap.admin.dn | default (print "cn=admin," .Values.ldap.suffix ) | quote }}
             - name: ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "openldap.fullname" . }}-admin
-                  key: password
+              value: {{ .Values.ldap.admin.password | quote }}
           volumeMounts:
 {{- if .Values.ldap.tls.enabled }}
             - name: tls
@@ -111,3 +113,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+

@@ -77,6 +77,10 @@ ldap:
   suffix: dc=example,dc=com
   tls:
     enabled: true
+  usernameAttribute: uid
+  admin:
+    # slappasswd -s password
+    password: "{SSHA}LQhU3LOHneznqV5jn3iI2zhKPxSmlmZz"
 
 debug: 0
 
@@ -142,3 +146,22 @@ ldifs:
       pwdMinLength: 10
       pwdMustChange: TRUE
       pwdSafeModify: TRUE
+
+    04-users.ldif: |+
+      dn: uid=service1,ou=services,dc=example,dc=com
+      cn: service1
+      uid: service1
+      givenName: 1
+      sn: service
+      objectClass: inetorgperson
+      mail: service1@example.com
+      userPassword: {SSHA}LQhU3LOHneznqV5jn3iI2zhKPxSmlmZz
+
+      dn: uid=service2,ou=services,dc=example,dc=com
+      cn: service2
+      uid: service2
+      givenName: 2
+      sn: service
+      objectClass: inetorgperson
+      mail: service2@example.com
+      userPassword: {SSHA}LQhU3LOHneznqV5jn3iI2zhKPxSmlmZz
