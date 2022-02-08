@@ -86,83 +86,83 @@ debug: 0
 debug_scripts: false
 
 ldifs:
-  configs:
-    00-overlays.ldif: |+
-      dn: olcOverlay={0}ppolicy,olcDatabase={1}mdb,cn=config
-      objectClass: olcPPolicyConfig
-      objectClass: olcOverlayConfig
-      olcOverlay: ppolicy
-      olcPPolicyDefault: cn=default,ou=policies,dc=example,dc=com
-      olcPPolicyForwardUpdates: FALSE
-      olcPPolicyHashCleartext: TRUE
-      olcPPolicyUseLockout: TRUE
+  configs: {}
+#   00-overlays.ldif: |+
+#     dn: olcOverlay={0}ppolicy,olcDatabase={1}mdb,cn=config
+#     objectClass: olcPPolicyConfig
+#     objectClass: olcOverlayConfig
+#     olcOverlay: ppolicy
+#     olcPPolicyDefault: cn=default,ou=policies,dc=example,dc=com
+#     olcPPolicyForwardUpdates: FALSE
+#     olcPPolicyHashCleartext: TRUE
+#     olcPPolicyUseLockout: TRUE
 
-      dn: olcOverlay={0}unique,olcDatabase={1}mdb,cn=config
-      objectClass: olcUniqueConfig
-      objectClass: olcOverlayConfig
-      olcOverlay: unique
-      olcUniqueURI: ldap://?mail,uid?sub
+#     dn: olcOverlay={0}unique,olcDatabase={1}mdb,cn=config
+#     objectClass: olcUniqueConfig
+#     objectClass: olcOverlayConfig
+#     olcOverlay: unique
+#     olcUniqueURI: ldap://?mail,uid?sub
 
-  objects:
-    01-base.ldif: |+
-      dn: dc=example,dc=com
-      dc: example
-      objectClass: domain
+  objects: {}
+#   01-base.ldif: |+
+#     dn: dc=example,dc=com
+#     dc: example
+#     objectClass: domain
 
-    02-ous.ldif: |+
-      dn: ou=services,dc=example,dc=com
-      ou: services
-      objectClass: organizationalunit
-      
-      dn: ou=policies,dc=example,dc=com
-      ou: policies
-      objectClass: organizationalunit
+#   02-ous.ldif: |+
+#     dn: ou=services,dc=example,dc=com
+#     ou: services
+#     objectClass: organizationalunit
+#     
+#     dn: ou=policies,dc=example,dc=com
+#     ou: policies
+#     objectClass: organizationalunit
 
-      dn: ou=users,dc=example,dc=com
-      ou: users
-      objectClass: organizationalunit
+#     dn: ou=users,dc=example,dc=com
+#     ou: users
+#     objectClass: organizationalunit
 
-      dn: ou=groups,dc=example,dc=com
-      ou: groups
-      objectClass: organizationalunit
+#     dn: ou=groups,dc=example,dc=com
+#     ou: groups
+#     objectClass: organizationalunit
 
-    03-default-password-policy.ldif: |+
-      dn: cn=default,ou=policies,dc=example,dc=com
-      cn: default
-      objectClass: pwdPolicy
-      objectClass: device
-      objectClass: top
-      pwdAllowUserChange: TRUE
-      pwdAttribute: userPassword
-      pwdCheckQuality: 2
-      pwdExpireWarning: 600
-      pwdFailureCountInterval: 30
-      pwdGraceAuthNLimit: 5
-      pwdInHistory: 24
-      pwdLockout: TRUE
-      pwdLockoutDuration: 0
-      pwdMaxAge: 0
-      pwdMaxFailure: 5
-      pwdMinAge: 0
-      pwdMinLength: 10
-      pwdMustChange: TRUE
-      pwdSafeModify: TRUE
+#   03-default-password-policy.ldif: |+
+#     dn: cn=default,ou=policies,dc=example,dc=com
+#     cn: default
+#     objectClass: pwdPolicy
+#     objectClass: device
+#     objectClass: top
+#     pwdAllowUserChange: TRUE
+#     pwdAttribute: userPassword
+#     pwdCheckQuality: 2
+#     pwdExpireWarning: 600
+#     pwdFailureCountInterval: 30
+#     pwdGraceAuthNLimit: 5
+#     pwdInHistory: 24
+#     pwdLockout: TRUE
+#     pwdLockoutDuration: 0
+#     pwdMaxAge: 0
+#     pwdMaxFailure: 5
+#     pwdMinAge: 0
+#     pwdMinLength: 10
+#     pwdMustChange: TRUE
+#     pwdSafeModify: TRUE
 
-    04-users.ldif: |+
-      dn: uid=service1,ou=services,dc=example,dc=com
-      cn: service1
-      uid: service1
-      givenName: 1
-      sn: service
-      objectClass: inetorgperson
-      mail: service1@example.com
-      userPassword: {SSHA}LQhU3LOHneznqV5jn3iI2zhKPxSmlmZz
+#   04-users.ldif: |+
+#     dn: uid=service1,ou=services,dc=example,dc=com
+#     cn: service1
+#     uid: service1
+#     givenName: 1
+#     sn: service
+#     objectClass: inetorgperson
+#     mail: service1@example.com
+#     userPassword: {SSHA}LQhU3LOHneznqV5jn3iI2zhKPxSmlmZz
 
-      dn: uid=service2,ou=services,dc=example,dc=com
-      cn: service2
-      uid: service2
-      givenName: 2
-      sn: service
-      objectClass: inetorgperson
-      mail: service2@example.com
-      userPassword: {SSHA}LQhU3LOHneznqV5jn3iI2zhKPxSmlmZz
+#     dn: uid=service2,ou=services,dc=example,dc=com
+#     cn: service2
+#     uid: service2
+#     givenName: 2
+#     sn: service
+#     objectClass: inetorgperson
+#     mail: service2@example.com
+#     userPassword: {SSHA}LQhU3LOHneznqV5jn3iI2zhKPxSmlmZz
