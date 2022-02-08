@@ -83,6 +83,7 @@ ldap:
     password: "{SSHA}LQhU3LOHneznqV5jn3iI2zhKPxSmlmZz"
 
 debug: 0
+debug_scripts: false
 
 ldifs:
   configs:

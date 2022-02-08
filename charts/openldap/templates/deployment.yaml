@@ -48,6 +48,10 @@ spec:
             - name: DEBUG
               value: {{ .Values.debug | quote }}
 {{- end }}
+{{- if .Values.debug_scripts }}
+            - name: DEBUG_SCRIPTS
+              value: {{ true | quote }}
+{{- end }}
             - name: LDAP_PORT
               value: "1389"
             - name: LDAP_SUFFIX
