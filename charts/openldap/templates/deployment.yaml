@@ -52,6 +52,8 @@ spec:
             - name: DEBUG_SCRIPTS
               value: {{ true | quote }}
 {{- end }}
+            - name: LDAPI
+              value: "1"
             - name: LDAP_PORT
               value: "1389"
             - name: LDAP_SUFFIX
