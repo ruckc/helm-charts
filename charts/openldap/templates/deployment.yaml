@@ -86,6 +86,8 @@ spec:
               mountPath: "/data"
             - name: tmp
               mountPath: "/tmp"
+            - name: socket
+              mountPath: "/opt/openldap/var/run"
             - name: ldif-configs
               mountPath: "/ldifs/config"
             - name: ldif-objects
@@ -99,6 +101,8 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "openldap.fullname" . }}-data
+        - name: socket
+          emptyDir: {}
         - name: tmp
           emptyDir: {}
         - name: ldif-configs
