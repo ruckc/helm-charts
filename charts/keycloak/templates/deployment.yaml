@@ -46,15 +46,15 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: KC_CACHE
-              value: {{ .Values.cache | default "local" }} 
+              value: {{ .Values.keycloak.cache | default "local" }} 
             - name: KC_LOG_LEVEL
-              value: {{ .Values.logLevel | default "info" }}
+              value: {{ .Values.keycloak.logLevel | default "info" }}
             - name: KC_PROXY
               value: reencrypt
             - name: KC_DB 
               value: postgres
             - name: KC_HOSTNAME_STRICT_BACKCHANNEL
-              value: "true"
+              value: "false"
             - name: KC_HOSTNAME_STRICT
               value: "false"
             - name: KC_HTTPS_CERTIFICATE_FILE
@@ -71,6 +71,8 @@ spec:
                 secretKeyRef:
                   name: {{ template "keycloak.fullname" . }}-admin
                   key: password
+            - name: KC_HTTP_RELATIVE_PATH
+              value: {{ .Values.keycloak.relativePath }}
            {{- if .Values.extraEnv }}
            {{- toYaml .Values.extraEnv | nindent 12 }}
            {{- end }}

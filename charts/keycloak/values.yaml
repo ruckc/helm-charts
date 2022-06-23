@@ -86,4 +86,7 @@ tolerations: []
 affinity: {}
 
 extraEnv: []
-logLevel: info
+keycloak:
+  cache: local
+  logLevel: info
+  relativePath: "/"
