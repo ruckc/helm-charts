@@ -3,6 +3,16 @@ entries:
   guacd:
   - apiVersion: v2
     appVersion: 1.4.0
+    created: "2022-07-11T14:27:56.89975493Z"
+    description: A Helm chart for Kubernetes
+    digest: e66c1f26392b989d6c86e7b2df3e775871a2b60221333dd765a44ffb632df843
+    name: guacd
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/guacd-0.1.1/guacd-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.4.0
     created: "2022-07-11T14:26:28.238117135Z"
     description: A Helm chart for Kubernetes
     digest: f3509ffbbcdc141c06391b9fecc1012d4005936f5385100cafafb08974608da4
@@ -385,4 +395,4 @@ entries:
     urls:
     - https://github.com/ruckc/helm-charts/releases/download/zookeeper-0.1.0/zookeeper-0.1.0.tgz
     version: 0.1.0
-generated: "2022-07-11T14:26:28.23848033Z"
+generated: "2022-07-11T14:27:56.900054333Z"
