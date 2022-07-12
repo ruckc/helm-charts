@@ -3,6 +3,16 @@ entries:
   guacamole-client:
   - apiVersion: v2
     appVersion: 1.4.0-6
+    created: "2022-07-12T19:31:40.685100178Z"
+    description: A Helm chart for Kubernetes
+    digest: 127c30dfb0fefe0f2da58bc8717b8cb2a4a246ff8ed9abd5232d94347a6da6ab
+    name: guacamole-client
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/guacamole-client-0.1.10/guacamole-client-0.1.10.tgz
+    version: 0.1.10
+  - apiVersion: v2
+    appVersion: 1.4.0-6
     created: "2022-07-12T19:25:14.548518024Z"
     description: A Helm chart for Kubernetes
     digest: 09589dd35eee60d3515c3761f9ca4f459019fab66064adb72f6a70eb64fd18a8
@@ -516,4 +526,4 @@ entries:
     urls:
     - https://github.com/ruckc/helm-charts/releases/download/zookeeper-0.1.0/zookeeper-0.1.0.tgz
     version: 0.1.0
-generated: "2022-07-12T19:25:14.549009964Z"
+generated: "2022-07-12T19:31:40.685740944Z"
