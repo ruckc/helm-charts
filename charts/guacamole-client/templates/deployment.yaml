@@ -27,6 +27,31 @@ spec:
       serviceAccountName: {{ include "guacamole-client.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: PGHOST
+              value: {{ .Values.database.hostname }}
+            - name: PGPORT
+              value: {{ .Values.database.port | default "5432" }}
+            - name: PGDATABASE
+              value: {{ .Values.database.name }}
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.username.secret }}
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.password.secret }}
+                  key: password
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -40,6 +65,22 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
+            - name: POSTGRESQL_HOSTNAME
+              value: {{ .Values.database.hostname }}
+            - name: POSTGRESQL_PORT
+              value: {{ .Values.database.port | default "5432" }}
+            - name: POSTGRESQL_DATABASE
+              value: {{ .Values.database.name }}
+            - name: POSTGRESQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.username.secret }}
+                  key: username
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.password.secret }}
+                  key: password
             {{- toYaml .Values.configEnv | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
