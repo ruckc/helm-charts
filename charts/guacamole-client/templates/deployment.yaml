@@ -37,7 +37,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: PGHOST
-              value: {{ .Values.database.hostname }}
+              value: {{ .Values.database.host }}
             - name: PGPORT
               value: {{ .Values.database.port | default "5432" }}
             - name: PGDATABASE
@@ -66,7 +66,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: POSTGRESQL_HOSTNAME
-              value: {{ .Values.database.hostname }}
+              value: {{ .Values.database.host }}
             - name: POSTGRESQL_PORT
               value: {{ .Values.database.port | default "5432" }}
             - name: POSTGRESQL_DATABASE
