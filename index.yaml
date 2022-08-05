@@ -205,6 +205,16 @@ entries:
     version: 1.0.0
   openldap:
   - apiVersion: v2
+    appVersion: 2.6.3-0
+    created: "2022-08-05T01:07:41.744127271Z"
+    description: openldap helm chart
+    digest: a4b2d26f05d9085a211474f735461b6370d271219f9afdae6e3e91be6e94288e
+    name: openldap
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/openldap-1.0.20/openldap-1.0.20.tgz
+    version: 1.0.20
+  - apiVersion: v2
     appVersion: 2.6.2-0
     created: "2022-07-05T20:15:09.789254569Z"
     description: openldap helm chart
@@ -546,4 +556,4 @@ entries:
     urls:
     - https://github.com/ruckc/helm-charts/releases/download/zookeeper-0.1.0/zookeeper-0.1.0.tgz
     version: 0.1.0
-generated: "2022-07-13T13:17:04.43606088Z"
+generated: "2022-08-05T01:07:41.744389272Z"
