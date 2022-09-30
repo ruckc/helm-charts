@@ -50,17 +50,19 @@ spec:
             - name: KC_LOG_LEVEL
               value: {{ .Values.keycloak.logLevel | default "info" }}
             - name: KC_PROXY
-              value: reencrypt
+              value: edge
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HTTP_PORT
+              value: "8080"
+            - name: KC_HOSTNAME
+              value: {{ .Values.keycloak.hostname }} 
             - name: KC_DB 
               value: postgres
             - name: KC_HOSTNAME_STRICT_BACKCHANNEL
               value: "false"
             - name: KC_HOSTNAME_STRICT
               value: "false"
-            - name: KC_HTTPS_CERTIFICATE_FILE
-              value: /certs/tls.crt
-            - name: KC_HTTPS_CERTIFICATE_KEY_FILE
-              value: /certs/tls.key
             - name: KEYCLOAK_ADMIN
               valueFrom:
                 secretKeyRef:

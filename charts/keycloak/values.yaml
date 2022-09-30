@@ -90,3 +90,4 @@ keycloak:
   cache: local
   logLevel: info
   relativePath: "/"
+  hostname: keycloak.example.com
