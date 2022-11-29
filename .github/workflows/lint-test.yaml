@@ -35,7 +35,7 @@ jobs:
         run: ct lint --config ct.yaml
 
       - name: kubeval
-        uses: desaintmartin/helm-kubeval-action@v1.0.2
+        uses: desaintmartin/helm-kubeval-action@v1.1.0
         with:
           path: ./charts
           config: ./.github/config_repos
