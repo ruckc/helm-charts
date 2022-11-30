@@ -263,6 +263,17 @@ entries:
     urls:
     - https://github.com/ruckc/helm-charts/releases/download/keycloak-1.0.0/keycloak-1.0.0.tgz
     version: 1.0.0
+  nifi:
+  - apiVersion: v2
+    appVersion: 1.18.0-1
+    created: "2022-11-30T13:47:26.884770975Z"
+    description: A Helm chart for Kubernetes
+    digest: 98954967f8457c0e4a8407693d0f71bed2e4f9074331525c2cc7e2496c27666d
+    name: nifi
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/nifi-0.1.0/nifi-0.1.0.tgz
+    version: 0.1.0
   openldap:
   - apiVersion: v2
     appVersion: 2.6.3-0
@@ -486,6 +497,16 @@ entries:
     version: 0.1.0
   postgres:
   - apiVersion: v2
+    appVersion: "15.1"
+    created: "2022-11-30T13:47:27.027370619Z"
+    description: A Helm chart for Kubernetes
+    digest: 66217ba05892b2a53631a480790813331e6a17930e8537a0ab098b73f96ea31a
+    name: postgres
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/postgres-1.0.1/postgres-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
     appVersion: "14"
     created: "2022-03-27T02:11:26.693531844Z"
     description: A Helm chart for Kubernetes
@@ -616,4 +637,4 @@ entries:
     urls:
     - https://github.com/ruckc/helm-charts/releases/download/zookeeper-0.1.0/zookeeper-0.1.0.tgz
     version: 0.1.0
-generated: "2022-11-16T15:15:47.931237445Z"
+generated: "2022-11-30T13:47:27.027475819Z"
