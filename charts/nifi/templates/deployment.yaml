@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nifi.fullname" . }}
+  labels:
+    {{- include "nifi.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "nifi.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "nifi.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "nifi.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: database-repository
+              mountPath: /opt/nifi/database-repository
+            - name: flowfile-repository
+              mountPath: /opt/nifi/flowfile-repository
+            - name: content-repository
+              mountPath: /opt/nifi/content-repository
+            - name: provenance-repository
+              mountPath: /opt/nifi/provenance-repository
+            - name: status-repository
+              mountPath: /opt/nifi/status-repository
+            - name: work
+              mountPath: /opt/nifi/work
+            - name: nifi-properties
+              mountPath: /opt/nifi/conf/nifi.properties
+              subPath: nifi.properties
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: database-repository
+          persistentVolumeClaim:
+            claimName: {{ template "nifi.fullname" . }}-database
+        - name: flowfile-repository
+          persistentVolumeClaim:
+            claimName: {{ template "nifi.fullname" . }}-flowfile
+        - name: content-repository
+          persistentVolumeClaim:
+            claimName: {{ template "nifi.fullname" . }}-content
+        - name: provenance-repository
+          persistentVolumeClaim:
+            claimName: {{ template "nifi.fullname" . }}-provenance
+        - name: status-repository
+          persistentVolumeClaim:
+            claimName: {{ template "nifi.fullname" . }}-status
+        - name: work
+          persistentVolumeClaim:
+            claimName: {{ template "nifi.fullname" . }}-work
+        - name: nifi-properties
+          configMap:
+            name: nifi-properties
+            items:
+                - key: nifi.properties
+                  path: nifi.properties
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

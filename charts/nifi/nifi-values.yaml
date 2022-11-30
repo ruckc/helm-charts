@@ -1,0 +1,23 @@
+nifi:
+  host: nifi.ruck.io
+  oidc:
+    url: https://login.ruck.io/realms/ruck.io/.well-known/openid-configuration
+    id: nifi
+    secret: sPAw4xLvXzSLXtSL8bDvR5WuPf0kPTJi
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    acme.cert-manager.io/http01-ingress-class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/tls-acme: "true"
+  hosts:
+    - host: nifi.ruck.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: nifi-tls
+      hosts:
+        - nifi.ruck.io
