@@ -174,6 +174,16 @@ entries:
     version: 0.1.0
   keycloak:
   - apiVersion: v2
+    appVersion: 21.1.1
+    created: "2023-05-19T22:15:55.838393134Z"
+    description: A Helm chart for Kubernetes
+    digest: d20df8e99b82e0c10a5d36fd6059c6cee7295f9a5887e786c4a2df1f86800a95
+    name: keycloak
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/keycloak-1.1.8/keycloak-1.1.8.tgz
+    version: 1.1.8
+  - apiVersion: v2
     appVersion: 20.0.1
     created: "2022-11-16T15:15:47.93082554Z"
     description: A Helm chart for Kubernetes
@@ -497,6 +507,16 @@ entries:
     version: 0.1.0
   postgres:
   - apiVersion: v2
+    appVersion: "15.3"
+    created: "2023-05-19T22:15:56.000750185Z"
+    description: A Helm chart for Kubernetes
+    digest: e9b23db8880e0a9e0f12ffcd159717ebca85f4fee8a1f0c3170e1c6c16c57162
+    name: postgres
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/postgres-1.0.2/postgres-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
     appVersion: "15.1"
     created: "2022-11-30T13:47:27.027370619Z"
     description: A Helm chart for Kubernetes
@@ -637,4 +657,4 @@ entries:
     urls:
     - https://github.com/ruckc/helm-charts/releases/download/zookeeper-0.1.0/zookeeper-0.1.0.tgz
     version: 0.1.0
-generated: "2022-11-30T13:47:27.027475819Z"
+generated: "2023-05-19T22:15:56.000874884Z"
