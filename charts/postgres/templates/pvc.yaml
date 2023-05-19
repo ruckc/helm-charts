@@ -5,6 +5,9 @@ metadata:
   labels:
     {{- include "postgres.labels" . | nindent 4 }}
 spec:
+  {{- if .Values.persistence.className }}
+  storageClassName: {{ .Values.persistence.className | quote }}
+  {{- end }}
   accessModes:
     - ReadWriteOnce
   resources:

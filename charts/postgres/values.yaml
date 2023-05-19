@@ -64,6 +64,7 @@ tolerations: []
 affinity: {}
 
 persistence:
+  # className: aws-ebs
   size: 50Gi
 
 database:
