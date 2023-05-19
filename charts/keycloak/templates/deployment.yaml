@@ -41,7 +41,6 @@ spec:
               protocol: TCP
           args:
             - start
-            - --auto-build
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
