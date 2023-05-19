@@ -175,6 +175,16 @@ entries:
   keycloak:
   - apiVersion: v2
     appVersion: 21.1.1
+    created: "2023-05-19T23:36:19.521222935Z"
+    description: A Helm chart for Kubernetes
+    digest: a7b108472602d0c83b49d3ba48d2c316327493a84b575ab5410a9d4d56781bdb
+    name: keycloak
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/keycloak-1.1.9/keycloak-1.1.9.tgz
+    version: 1.1.9
+  - apiVersion: v2
+    appVersion: 21.1.1
     created: "2023-05-19T22:15:55.838393134Z"
     description: A Helm chart for Kubernetes
     digest: d20df8e99b82e0c10a5d36fd6059c6cee7295f9a5887e786c4a2df1f86800a95
@@ -667,4 +677,4 @@ entries:
     urls:
     - https://github.com/ruckc/helm-charts/releases/download/zookeeper-0.1.0/zookeeper-0.1.0.tgz
     version: 0.1.0
-generated: "2023-05-19T22:26:02.443235988Z"
+generated: "2023-05-19T23:36:19.521338123Z"
