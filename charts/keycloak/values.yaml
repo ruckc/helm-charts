@@ -91,3 +91,5 @@ keycloak:
   logLevel: info
   relativePath: "/"
   hostname: keycloak.example.com
+
+args: []

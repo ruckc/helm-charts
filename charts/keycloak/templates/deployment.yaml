@@ -41,6 +41,7 @@ spec:
               protocol: TCP
           args:
             - start
+            {{- toYaml .Values.args | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
