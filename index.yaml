@@ -538,6 +538,16 @@ entries:
   postgres:
   - apiVersion: v2
     appVersion: "15.4"
+    created: "2023-09-08T19:08:52.388693135Z"
+    description: A Helm chart for Kubernetes
+    digest: 431b98eb02fecdee6580fe76e3b2896ad31042a4f87b8f301602bf9b6a55825a
+    name: postgres
+    type: application
+    urls:
+    - https://github.com/ruckc/helm-charts/releases/download/postgres-1.0.6/postgres-1.0.6.tgz
+    version: 1.0.6
+  - apiVersion: v2
+    appVersion: "15.4"
     created: "2023-09-08T18:53:00.949487574Z"
     description: A Helm chart for Kubernetes
     digest: 169dc3379c9895f6d4b941a59a428bd03a785c383a0936966a0fee7c20d79615
@@ -717,4 +727,4 @@ entries:
     urls:
     - https://github.com/ruckc/helm-charts/releases/download/zookeeper-0.1.0/zookeeper-0.1.0.tgz
     version: 0.1.0
-generated: "2023-09-08T18:53:00.949714476Z"
+generated: "2023-09-08T19:08:52.388832536Z"
